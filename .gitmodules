@@ -1,0 +1,3 @@
+[submodule "news-feed-eradicator"]
+	path = news-feed-eradicator
+	url = https://github.com/jordwest/news-feed-eradicator.git
