@@ -27,3 +27,5 @@ Facebook changes its internal code names frequently. If Reels suddenly start app
 5. **Reload:** Save the file and click the "Refresh" icon on the extension in your browser.
 
 If you aren't sure which name to pick, you can always reach out or open an "Issue" on this repo, and I'll help find the update.
+# remove-reels
+A simple chrome/brave extension to remove reels from your Facebook news feed.

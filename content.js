@@ -1,22 +1,32 @@
 const hideReels = () => {
-  // Find all headings on the page
-  const headings = document.querySelectorAll('h3, span, div');
-  
-  headings.forEach(element => {
-    // Check if the element contains the word "Reels"
-    if (element.textContent === 'Reels') {
-      // Find the big container that holds the whole Reels section
-      const container = element.closest('.x1lliihq'); // This is a common FB container class
-      if (container) {
-        container.style.display = 'none';
-      }
-    }
+  document.querySelectorAll('[aria-label="Reels"]').forEach(el => {
+    el.style.display = 'none';
   });
 };
 
-// Run it once when the page loads
-hideReels();
+const observer = new MutationObserver(mutations => {
+  let needsScan = false;
+  for (const m of mutations) {
+    if (m.type === 'childList' && m.addedNodes.length) {
+      needsScan = true;
+      break;
+    }
+    if (m.type === 'attributes' && m.attributeName === 'aria-label') {
+      const target = /** @type {Element} */ (m.target);
+      if (target.getAttribute('aria-label') === 'Reels') {
+        target.style.display = 'none';
+      }
+    }
+  }
+  if (needsScan) hideReels();
+});
 
-// Keep watching for new items as you scroll
-const observer = new MutationObserver(hideReels);
-observer.observe(document.body, { childList: true, subtree: true });
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+  attributes: true,
+  attributeFilter: ['aria-label'],
+});
+
+// Also catch any elements that already have the attribute
+hideReels();
