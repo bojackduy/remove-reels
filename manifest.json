@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Hide Reels",
+  "name": "Hide Reels & Shorts",
   "version": "1.0",
-  "description": "Removes the Reels section from the feed.",
+  "description": "Blocks Facebook Reels and YouTube Shorts.",
   "content_scripts": [
     {
-      "matches": ["https://*.facebook.com/*"],
+      "matches": ["https://*.facebook.com/*", "https://*.youtube.com/*"],
       "js": ["content.js"]
     }
   ]

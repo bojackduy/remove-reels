@@ -1,18 +1,39 @@
-const REELS_PATTERN = /\/reel\//;
+const host = location.hostname;
+
+const config = {
+  'facebook.com': {
+    pattern: /\/reel\//,
+    css: '[aria-label="Reels"] { display: none !important; }',
+  },
+  'youtube.com': {
+    pattern: /\/shorts\//,
+    css: `
+      [title="Shorts"],
+      a[aria-label="Shorts"],
+      ytd-guide-entry-renderer:has(a[title="Shorts"]),
+      ytd-rich-section-renderer:has(#title-container:has(a[title="Shorts"]))
+        { display: none !important; }
+    `,
+  },
+};
+
+const site = Object.keys(config).find(h => host.includes(h));
+if (!site) throw new Error('Unsupported site');
+
+const { pattern, css } = config[site];
 
 const blockUrl = url => {
   try {
-    return REELS_PATTERN.test(new URL(url, location.origin).pathname);
+    return pattern.test(new URL(url, location.origin).pathname);
   } catch { return false; }
 };
 
 const goHome = () => {
-  if (REELS_PATTERN.test(location.pathname)) {
+  if (pattern.test(location.pathname)) {
     location.replace('/');
   }
 };
 
-// Block clicks on Reels links
 document.addEventListener('click', e => {
   const link = e.target.closest('a[href]');
   if (link && blockUrl(link.href)) {
@@ -21,7 +42,6 @@ document.addEventListener('click', e => {
   }
 }, true);
 
-// Block programmatic navigation via History API
 const { pushState, replaceState } = history;
 history.pushState = function (...args) {
   if (args[2] && blockUrl(args[2])) return;
@@ -32,11 +52,9 @@ history.replaceState = function (...args) {
   return replaceState.apply(this, args);
 };
 
-// Redirect if somehow already on a Reels page
 goHome();
 new MutationObserver(goHome).observe(document.body, { subtree: true, childList: true });
 
-// Keep the sidebar Reels link hidden too
 const style = document.createElement('style');
-style.textContent = '[aria-label="Reels"] { display: none !important; }';
+style.textContent = css;
 document.head.append(style);
