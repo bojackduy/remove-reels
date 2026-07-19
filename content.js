@@ -1,5 +1,7 @@
 const host = location.hostname;
 
+const BLOCKED_PAGE = 'data:text/html,<h1>Blocked</h1><p>This site has been blocked.</p>';
+
 const config = {
   'facebook.com': {
     pattern: /\/reel\//,
@@ -14,6 +16,10 @@ const config = {
       ytd-rich-section-renderer:has(#title-container:has(a[title="Shorts"]))
         { display: none !important; }
     `,
+  },
+  'tiktok.com': {
+    pattern: /./,
+    css: 'html { display: none !important; }',
   },
 };
 
@@ -30,7 +36,7 @@ const blockUrl = url => {
 
 const goHome = () => {
   if (pattern.test(location.pathname)) {
-    location.replace('/');
+    location.replace(site === 'tiktok.com' ? BLOCKED_PAGE : '/');
   }
 };
 
